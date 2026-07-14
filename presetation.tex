@@ -1,6 +1,7 @@
 % -*- coding: utf-8 -*-
 % Beamer Presentation: LSMC Method for American Option Pricing
 % Compiler: xelatex (twice)
+% Repository: https://github.com/ThomasLu2412/Least-Squares-Monte-Carlo.git
 
 \PassOptionsToPackage{table}{xcolor}
 \documentclass[10pt,aspectratio=169]{beamer}
@@ -59,7 +60,7 @@
   \end{center}
 }
 
-% --- TikZ Styles ---
+% --- TikZ Styles for Flowchart ---
 \tikzset{
     block/.style={rectangle, draw, fill=gray!8, rounded corners,
                   minimum height=2.8em, text width=10em, text centered,
@@ -78,16 +79,16 @@
 \newcommand{\argmin}{\operatorname{argmin}}
 \newcommand{\de}{\mathrm{d}}
 
-% ============================================
+% ============================================================
 \begin{document}
-% ============================================
+% ============================================================
 
-% ============================================
-% Slide 1: Title
-% ============================================
+% ============================================================
+% Slide 1: Title Page
+% ============================================================
 \title{American Option Pricing via Least Squares Monte Carlo}
 \subtitle{LSMC: Resolving Optimal Stopping Through $L^2$ Projection}
-\author{\textbf{Your Name}}
+\author{\textbf{TL}}
 \institute{School of Mathematical Sciences}
 \date{July 2026}
 
@@ -95,9 +96,9 @@
   \titlepage
 \end{frame}
 
-% ============================================
-% Slide 2: European vs American
-% ============================================
+% ============================================================
+% Slide 2: European vs American Option Formulations
+% ============================================================
 \begin{frame}{From European to American: The Optimal Stopping Problem}
 
 \textbf{Core distinction}: \textit{When} can the right to trade be exercised?
@@ -139,9 +140,9 @@
 
 \end{frame}
 
-% ============================================
-% Slide 3: The Core Dilemma (NEW LOGIC)
-% ============================================
+% ============================================================
+% Slide 3: Snell Envelope and Dynamic Programming Principle
+% ============================================================
 \begin{frame}{The Core Dilemma: Exercise vs. Hold}
 
 To solve the optimal stopping problem, the holder faces a binary choice at each step $t$. The value $V_t$ follows the \textbf{Snell Envelope}:
@@ -166,9 +167,9 @@ To solve the optimal stopping problem, the holder faces a binary choice at each 
 \small \textbf{The Paradox}: Monte Carlo paths evolve \textit{forward} in time, but computing $C(t,S_t)$ requires information from the \textit{future (backward induction)}. How to bridge this?
 \end{frame}
 
-% ============================================
-% Slide 4: The 8-Path Walk-Through (MOVED UP FOR INTUITION)
-% ============================================
+% ============================================================
+% Slide 4: The 8-Path Numerical Walk-Through (Intuition First)
+% ============================================================
 \begin{frame}{The Eureka Moment: The 8-Path Example}
 
 \textbf{Setup}: American Put, 8 MC paths, 3 time steps, $K=1.10$. \\
@@ -226,9 +227,9 @@ At $t_2 = 2/3$, should we exercise? \textit{(Longstaff \& Schwartz use Cross-Sec
 \end{columns}
 \end{frame}
 
-% ============================================
-% Slide 5: Algorithm Overview (MOVED DOWN)
-% ============================================
+% ============================================================
+% Slide 5: Flowchart - Algorithm Overview
+% ============================================================
 \begin{frame}{Formalizing the Intuition: The LSMC Algorithm}
 
 \vspace{0.4cm}
@@ -253,10 +254,9 @@ At $t_2 = 2/3$, should we exercise? \textit{(Longstaff \& Schwartz use Cross-Sec
 \end{itemize}
 \end{frame}
 
-
-% ============================================
-% Slide 6: Step 2A (Math Details)
-% ============================================
+% ============================================================
+% Slide 6: Step 2A - Math of Conditional Expectation & L2 Projection
+% ============================================================
 \begin{frame}{Step 2A: Estimating Continuation via $L^2$ Projection}
 
 Recall our mathematical objective at each backward step $t_j$:
@@ -278,10 +278,9 @@ For ITM paths $\mathcal{I}_j$, regress realized cash flows $Y_{i} = e^{-r\Delta 
 
 \end{frame}
 
-
-% ============================================
-% Slide 7: Step 2B
-% ============================================
+% ============================================================
+% Slide 7: Step 2B - Pathwise Update Rule
+% ============================================================
 \begin{frame}{Step 2B: Exercise Decision and Cash Flow Update}
 
 With $\hat{C}(t_j, S_{i,t_j}) = \sum_{k=0}^{d} \hat{\beta}_{j,k}\; \psi_k(S_{i,t_j})$ estimated, we compare:
@@ -301,9 +300,9 @@ With $\hat{C}(t_j, S_{i,t_j}) = \sum_{k=0}^{d} \hat{\beta}_{j,k}\; \psi_k(S_{i,t
 \end{itemize}
 \end{frame}
 
-% ============================================
-% Slide 8: Step 3
-% ============================================
+% ============================================================
+% Slide 8: Step 3 - Final Pricing and Convergence Error
+% ============================================================
 \begin{frame}{Step 3: From Backward Induction to the Option Price}
 
 Finally, at time $t_0 = 0$, we simply average the discounted cash flows from the very first optimal stopping time $\tau_i$ for each path:
@@ -326,10 +325,9 @@ Finally, at time $t_0 = 0$, we simply average the discounted cash flows from the
 \end{itemize}
 \end{frame}
 
-
-% ============================================
-% Slide 9: Step 1 (Implementation Details) - MOVED HERE
-% ============================================
+% ============================================================
+% Slide 9: Implementation Details I - Simulating GBM Paths
+% ============================================================
 \begin{frame}{Implementation Details I: Simulating Paths}
 
 To feed the algorithm, we first simulate asset price dynamics under the risk-neutral measure $\Q$ (e.g., Geometric Brownian Motion):
@@ -352,9 +350,9 @@ Applying \textbf{It\^o's lemma} yields the exact discrete-time path generator:
 \end{itemize}
 \end{frame}
 
-% ============================================
-% Slide 10: Implementation Details II (Basis Functions)
-% ============================================
+% ============================================================
+% Slide 10: Implementation Details II - Basis Functions Analysis
+% ============================================================
 \begin{frame}{Implementation Details II: Choice of Basis Functions}
 
 \begin{center} 
@@ -379,66 +377,89 @@ Stability & \textcolor{errorColor}{\textbf{Unstable} for $d \ge 4$} & \textbf{St
 \end{itemize}
 \end{frame}
 
-% ============================================
-% Slide 11: Numerical Results (Parameters → Table → Plot)
-% ============================================
-\begin{frame}{Numerical Results}
+% ============================================================
+% Slide 11: Numerical Results I - Valuation & Convergence (Fixed Aspect Ratio)
+% ============================================================
+\begin{frame}{Numerical Results I: Valuation and Convergence}
 
-\textbf{Parameters}: $S_0=36$,\; $K=40$,\; $T=1$\,yr,\; $r=0.06$,\; $\sigma=0.2$,\; $N=10{,}000$,\; $M=50$
+% 紧凑版参数 Banner，释放更多垂直空间给图片
+\begin{tcolorbox}[colback=boxBg, colframe=mathBlue, arc=2pt, boxrule=0.8pt, top=2pt, bottom=2pt]
+  \centering \footnotesize
+  \textbf{Settings}: $S_0=36$, $K=40$, $T=1.0$ Yr, $r=0.06$, $\sigma=0.2$, $M=50$, $\text{Benchmark Price} = \mathbf{4.487}$
+\end{tcolorbox}
 
-\vspace{0.15cm}
-\begin{center}
-\small
-\rowcolors{2}{gray!6}{white}
-\begin{tabular}{lccc}
-\toprule
-\textbf{Method} & \textbf{Price} & \textbf{Std. Err.} & \textbf{vs. Benchmark} \\
-\midrule
-European Put (BSM) & 3.844 & --- & Lower bound \\
-\textbf{LSMC} ($d=4$) & \textbf{4.371} & 0.06 & $-2.6\%$ \\
-\textbf{LSMC} ($d=5$) & \textbf{4.347} & 0.06 & $-3.1\%$ \\
-Binomial Tree (5000 steps) & 4.487 & --- & \textbf{Baseline} \\
-\bottomrule
-\end{tabular}
-\end{center}
+\vspace{-0.1cm}
+\begin{columns}[T] 
 
-\vspace{0.1cm}
-\noindent
-\begin{minipage}{0.45\textwidth}
-\small
-\textbf{Early exercise premium}: $V_{\text{Am}} - V_{\text{Eu}} \approx 0.64$\\[4pt]
-\textbf{Greeks}: $\Delta = -0.71$, $\Gamma = 0.13$, $\mathcal{V} = 12.20$
-\end{minipage}
-\hfill
-\begin{minipage}{0.50\textwidth}
-\small
-\textbf{Convergence} ($N \to 50{,}000$):
-$\displaystyle
-\begin{array}{c|c}
-N & \text{Price} \\ \hline
-100 & 4.64 \\
-5{,}000 & 4.25 \\
-50{,}000 & 4.43
-\end{array}
-$
-\end{minipage}
+% 大幅收敛图片 (占比提升至 73%)
+\begin{column}{0.73\textwidth}
+    \begin{center}
+        \includegraphics[width=1.02\linewidth]{lsmc_plots_convergence.png}
+    \end{center}
+\end{column}
 
-\vspace{0.15cm}
-\begin{center}
-\fcolorbox{gray!40}{white}{\begin{minipage}{0.7\textwidth}
-\centering
-\vspace{0.8cm}
-\textcolor{gray!60}{\small [Screenshot: Convergence plot \& exercise boundary from Python]}\\[4pt]
-\textcolor{gray!40}{\footnotesize Run \texttt{python project\_code.py} then insert \texttt{lsmc\_results.png}}\\[4pt]
-\textcolor{gray!40}{\footnotesize Or call \texttt{plot\_results()} for 4-panel figure}
-\vspace{0.8cm}
-\end{minipage}}
-\end{center}
+% 极简版 Talking Points
+\begin{column}{0.24\textwidth}
+    \vspace{0.4cm}
+    \textbf{Convergence:}
+    \vspace{0.15cm}
+    \begin{itemize}
+        \setlength{\itemsep}{0.6em}
+        \footnotesize
+        \item \textbf{Path (a)}: Smooth convergence to benchmark as $N \to 10^5$.
+        
+        \item \textbf{Degree (b)}: Highly stable for $d \ge 5$, showing polynomial robustness.
+        
+        \item \textbf{\textcolor{errorColor}{Downward Bias}}: Binds the benchmark from below ($\approx 4.475$), verifying sub-optimal policy lower-bound theory.
+    \end{itemize}
+\end{column}
+
+\end{columns}
 \end{frame}
 
-% ============================================
-% Slide 12: Limitations
-% ============================================
+% ============================================================
+% Slide 12: Numerical Results II - Exercise Boundary, Greeks & GitHub link
+% ============================================================
+\begin{frame}{Numerical Results II: Boundary and Hedging Greeks}
+
+\vspace{0.2cm}
+\begin{columns}[T] 
+
+% 大幅对冲与边界图片 (占比提升至 73%)
+\begin{column}{0.73\textwidth}
+    \begin{center}
+        \includegraphics[width=1.02\linewidth]{lsmc_plots_hedging.png}
+        
+        % 图片下方的 GitHub 仓库说明，使用等宽字体并上色，极具学术范
+        \vspace{0.3cm}
+        \scriptsize 
+        \textcolor{mathBlue}{\textbf{Python Code Available at:}} \\
+        \url{https://github.com/ThomasLu2412/Least-Squares-Monte-Carlo.git}
+    \end{center}
+\end{column}
+
+% 极简版 Talking Points
+\begin{column}{0.24\textwidth}
+    \vspace{0.6cm}
+    \textbf{Hedge \& Execute:}
+    \vspace{0.15cm}
+    \begin{itemize}
+        \setlength{\itemsep}{0.8em}
+        \footnotesize
+        \item \textbf{Boundary (c)}: Smoothly climbs to strike $K=40$ at maturity as time value decays.
+        
+        \item \textbf{Greeks (d)}: Extremely smooth Delta and Vega curves achieved via CRN.
+        
+        \item \textbf{Utility}: High numerical stability, ready for industrial risk management.
+    \end{itemize}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+% ============================================================
+% Slide 13: Strengths & Limitations of LSMC
+% ============================================================
 \begin{frame}{Strengths and Limitations of the LSMC Approach}
 
 \begin{columns}[T] 
@@ -463,9 +484,9 @@ $
 \end{columns}
 \end{frame}
 
-% ============================================
-% Slide 13: Summary
-% ============================================
+% ============================================================
+% Slide 14: Summary & Mathematical Mappings
+% ============================================================
 \begin{frame}{Summary: The Mathematical Bridges}
 
 \begin{enumerate}
@@ -482,9 +503,9 @@ $
 
 \end{frame}
 
-% ============================================
-% Slide 14: References
-% ============================================
+% ============================================================
+% Slide 15: Academic References
+% ============================================================
 \begin{frame}{References}
 \begin{thebibliography}{10}
 
@@ -496,28 +517,15 @@ $
 \newblock \textit{An Analysis of a Least Squares Regression Method for American Option Pricing}.
 \newblock Finance and Stochastics, Vol. 6, pp. 449--471.
 
-\bibitem{Glasserman} P. Glasserman (2004).
-\newblock \textit{Monte Carlo Methods in Financial Engineering}. Springer.
-
-\bibitem{Shreve} S. E. Shreve (2004).
-\newblock \textit{Stochastic Calculus for Finance II: Continuous-Time Models}. Springer.
-
 \end{thebibliography}
 \end{frame}
 
-% ============================================
-% Slide 15: Thank You
-% ============================================
+% ============================================================
+% Slide 16: Ending Page
+% ============================================================
 \begin{frame}{}
 \centering
-\vspace{1.5cm}
 \LARGE \textbf{\textcolor{mathBlue}{Thank you for your attention.}}
-\vspace{0.5cm}
-
-\Large \textcolor{gray!80}{Questions and discussion are welcome.}
-
-\vspace{1.0cm}
-\footnotesize \textcolor{gray!60}{The complete Python implementation and this slide deck are available upon request.}
 \end{frame}
 
 % ============================================
